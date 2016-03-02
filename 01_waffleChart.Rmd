@@ -1,0 +1,194 @@
+---
+title: "Waffle Refugee EU repartition"
+author: "Duc-Quang Nguyen"
+date: "13 February 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(waffle)
+library(swiTheme)
+library(swiMap)
+library(extrafont)
+library(scales)
+```
+
+## Prepare data
+
+[Data from EU council](http://ec.europa.eu/dgs/home-affairs/what-we-do/policies/european-agenda-migration/press-material/docs/state_of_play_-_relocation_en.pdf)
+
+```{r}
+# load the translations
+txt <- read.csv("input/RelocationEU_migrants - Sheet1.csv", stringsAsFactors = F, row.names = 1)
+cidx <- unique(which(txt =="" | is.na(txt), T)[,2])
+if(length(cidx > 0)) {
+  warning(paste(colnames(txt)[cidx], collapse = "\t"), " languages will be discarded!", "\n")
+  txt <- txt[,-cidx, drop = F]
+}
+
+# Define the data!
+data <- c(328 + 301)
+data <- c(data, 6202 - data)
+data <- c(data, 98256 - sum(data))
+data <- c(data,  7744 + 54000)
+stopifnot(sum(data) == 160000)
+```
+
+## Helper waffle chart
+```{r, echo =F}
+waffleduc <- function(parts, rows = 10, xlab=NULL, title=NULL, colors=NA,
+                   size = 2, flip = FALSE, reverse=FALSE, equal=TRUE, pad=0,
+                   use_glyph = FALSE, glyph_size = 12,legend_pos = "right", 
+                   legend.key = element_rect(size = 5, color = NA),
+                   legend.key.size = unit(2.5, "cm"),
+                   legend.key.height = unit(3, "cm"),
+                   legend.text = element_text(size = 50), 
+                   plot.title = element_text(size=24,  family = "Open Sans Semibold", hjust = 0, vjust = -0.1)) {
+
+  # fill in any missing names
+  part_names <- names(parts)
+  if (length(part_names) < length(parts)) {
+    part_names <- c(part_names, LETTERS[1:length(parts)-length(part_names)])
+  }
+
+  # use Set2 if no colors are specified
+  if (all(is.na(colors))) {
+    colors <- brewer.pal(length(parts), "Set2")
+  }
+
+  # make one big vector of all the bits
+  parts_vec <- unlist(sapply(1:length(parts), function(i) {
+    rep(LETTERS[i+1], parts[i])
+  }))
+
+  if (reverse) { parts_vec <- rev(parts_vec) }
+  # setup the data frame for geom_rect
+
+  dat <- expand.grid(y=1:rows, x=seq_len(pad + (ceiling(sum(parts) / rows))))
+  # add NAs if needed to fill in the "rectangle"
+
+  dat$value <- c(parts_vec, rep(NA, nrow(dat)-length(parts_vec)))
+  if(!inherits(use_glyph, "logical")){
+      fontlab <- rep(fa_unicode[use_glyph],length(unique(parts_vec)))
+      dat$fontlab <- c(fontlab[as.numeric(factor(parts_vec))], rep(NA, nrow(dat)-length(parts_vec)))
+  }
+
+  if (flip) {
+    gg <- ggplot(dat, aes(x=y, y=x))
+  } else {
+    gg <- ggplot(dat, aes(x=x, y=y))
+  }
+  gg <- gg + theme_bw()
+
+  # make the plot
+
+  if (inherits(use_glyph, "logical")) {
+    gg <- gg + geom_tile(aes(fill=value), color="white", size=size)
+    gg <- gg + scale_fill_manual(name="",
+                                 values=colors,
+                                 labels=part_names)
+    gg <- gg + guides(fill=guide_legend(nrow = 2, byrow = TRUE, override.aes=list(colour=NULL)))
+
+  } else {
+
+    if (choose_font("FontAwesome", quiet=TRUE) == "") {
+      stop("FontAwesome not found. Install via: https://github.com/FortAwesome/Font-Awesome/tree/master/fonts",
+           call.=FALSE)
+    }
+
+    suppressWarnings(
+      suppressMessages(
+      font_import(system.file("fonts", package="waffle"),
+                  recursive=FALSE,
+                  prompt=FALSE)))
+
+    if (!(!interactive() || stats::runif(1) > 0.1)) {
+      message("Font Awesome by Dave Gandy - http://fontawesome.io")
+    }
+
+    gg <- gg + geom_tile(color=NA, fill=NA, size=size, alpha=0, show.legend=FALSE)
+    gg <- gg + geom_point(aes(color=value), fill=NA, size=0, show.legend=TRUE)
+    gg <- gg + geom_text(aes(color=value,label=fontlab),
+                         family="FontAwesome", size=glyph_size, show.legend=FALSE)
+    gg <- gg + scale_color_manual(name="",
+                                 values=colors,
+                                 labels=part_names)
+    gg <- gg + guides(color=guide_legend(override.aes=list(shape=15, size=7), nrow = 2))
+    gg <- gg + theme(legend.background=element_rect(fill=NA, color=NA))
+    gg <- gg + theme(legend.key=legend.key)
+
+  }
+
+  gg <- gg + labs(x=xlab, y=NULL, title=title)
+  gg <- gg + scale_x_continuous(expand=c(0, 0))
+  gg <- gg + scale_y_continuous(expand=c(0, 0))
+
+  if (equal) { gg <- gg + coord_equal() }
+
+  gg <- gg + theme(panel.grid=element_blank())
+  gg <- gg + theme(panel.border=element_blank())
+  gg <- gg + theme(panel.background=element_blank())
+  gg <- gg + theme(panel.margin=unit(0, "null"))
+
+  gg <- gg + theme(axis.text=element_blank())
+  gg <- gg + theme(axis.title.x=element_text(size=10))
+  gg <- gg + theme(axis.ticks=element_blank())
+  gg <- gg + theme(axis.line=element_blank())
+  gg <- gg + theme(axis.ticks.length=unit(0, "null"))
+
+  gg <- gg + theme(plot.title=plot.title)
+
+  gg <- gg + theme(plot.background=element_blank())
+  gg <- gg + theme(plot.margin=unit(c(1.7, 0, 0.7, 0), "cm"))
+  #gg <- gg + theme(plot.margin=rep(unit(0, "null"), 4))
+
+  gg <- gg + theme(legend.position=legend_pos)
+  gg <- gg + theme(legend.key.size = legend.key.size)
+  gg <- gg + theme(legend.key.height = legend.key.height)
+  gg <- gg + theme(legend.text = legend.text)
+  gg
+}
+```
+
+## Plot
+```{r}
+
+for (lang in colnames(txt)) {
+  
+  dd <- data
+  title <- paste(strwrap(txt['main.title', lang], width = 48, prefix = "\n ", initial = ""), collapse ="")
+  
+  header.fsize <- 96
+  title.fsize <- 60
+  legend.fsize <- 40
+  
+  
+  gridFormat <- function(
+    gg, top = paste0(" ", title), bottom = paste0(txt['source', lang])) {
+    grid.arrange(gg,
+      top = textGrob(top, x = 0, y = -0.1, vjust = 0, hjust = 0,
+      gp = gpar(fontsize = header.fsize, fontfamily = txt['font1', lang], col = "black", lineheight = 0.8)),
+      bottom = textGrob(bottom, x = 0.98, y = 1, vjust = 1, hjust = 1,
+      gp = gpar(fontsize = 24, fontfamily = txt['font', lang], col = "#737373"))
+    )
+  }
+  
+  names(dd) <- txt[c('reloc.type', 'pret.type', 'eng.type', 'rep.type'), lang]
+  names(dd) <-  paste("", names(dd), "  ")
+  
+  wchart <- waffleduc(dd, rows = 200, size = 1.2, color = c('#333366', '#ab3d3f', '#aa8959', "darkgrey"), 
+    legend_pos = "top", flip = T, reverse = T, 
+    legend.key.size = unit(1.5, "cm"),
+    title = paste0("\n", txt['descr', lang], "\n", txt['descr2', lang], "\n", txt['descr3', lang], "\n"),
+    plot.title = element_text(size = title.fsize,  family = txt['font', lang], hjust = 0, vjust = -0.1),
+    legend.text = element_text(size = legend.fsize, family = txt['font', lang]))
+
+png(paste0("output/waffle_repartition_", lang, ".png"), width = 640 * 3, height = 640 * 12)
+gridFormat(wchart)
+dev.off()
+}
+
+```
