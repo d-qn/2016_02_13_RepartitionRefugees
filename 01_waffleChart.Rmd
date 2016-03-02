@@ -20,6 +20,9 @@ library(scales)
 
 [Data from EU council](http://ec.europa.eu/dgs/home-affairs/what-we-do/policies/european-agenda-migration/press-material/docs/state_of_play_-_relocation_en.pdf)
 
+[google sheet translations](https://docs.google.com/spreadsheets/d/1sUj5E_rtbsT-ZqFTCgQ4HO2q8zGngjqwu1OnOBWtt1I/edit#gid=0)
+
+
 ```{r}
 # load the translations
 txt <- read.csv("input/RelocationEU_migrants - Sheet1.csv", stringsAsFactors = F, row.names = 1)
