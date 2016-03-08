@@ -1,13 +1,23 @@
 code,EN,FR,DE,IT,PT,AR,RU,ES,JA,ZH
-main.title,,Etat des lieux: relocalisation des migrants arrivés en Italie et en Grèce,,Ricollocazione dei migranti giunti in Italia e in Grecia,,,,,,
-descr,,160'000 réfugiés à relocaliser par l'UE.,,L'UE si è impegnata a ricollocare 160000 richiedenti l'asilo. ,,,,,,
-descr2,,Chaque réfugié est représenté par un carré,,Ogni persona è rappresentata da un quadratino.,,,,,,
-descr3,,Situation au 1er mars 2016,,Situazione al 1° marzo 2016,,,,,,
-source,Source,source: Commission Européenne | swissinfo.ch,,Fonte,,,,,,
-reloc.type,,relocalisés,,Migranti già ricollocati,,,,,,
-pret.type,,places prêtes,,Posti di accoglienza ancora a disposizione,,,,,,
-eng.type,,engagements pris,,Impegni assunti dagli Stati,,,,,,
-rep.type,,à répartir parmi les états,,Migranti per i quali non c'è ancora una decisione di ripartizione,,,,,,
-font,Open Sans,Open Sans,Open Sans,Open Sans,Open Sans,,Open Sans,Open Sans,,
-font1,Open Sans Light,Open Sans Light,Open Sans Light,Open Sans Light,Open Sans Light,,Open Sans Light,Open Sans Light,,
-font2,Open Sans Semibold,Open Sans Semibold,Open Sans Semibold,Open Sans Semibold,Open Sans Semibold,,Open Sans Semibold,Open Sans Semibold,,
+main.title,Relocation of migrant arrived in Italy and Greece ,Etat des lieux: relocalisation des migrants arrivés en Italie et en Grèce,Umverteilung der in Italien und Griechenland registrierten Migranten ,Ricollocazione dei migranti giunti in Italia e in Grecia.,Deslocalização dos imigrantes que chegam na Itália e na Grécia,"
+
+ 
+
+جردٌ
+للأوضاع بشأن إعادة توطين المُهاجرين الذين وصلوا إلى إيطاليا واليونان 
+
+
+
+ 
+
+","Расселение мигрантов, прибывших в Грецию и Италию, по странам ЕС",Relocalización de refugiados llegados a Italia o Grecia ,イタリアとギリシャに到着した難民の割り当て・移送状況,从意大利和希腊入境难民的安置情况
+descr,"EU to relocate 160,000 asylum seekers",160'000 migrants à relocaliser par l'UE,Die EU muss 160'000 Asylsuchende umverteilen,L'UE si è impegnata a ricollocare 160'000 richiedenti l'asilo,160.000 imigrantes a serem relocados apela UE, تعهّد الإتحاد الأوروبي بإعادة توطين 160 ألف لاجئ ,Всего ЕС должен распределить 160 тыс. мигрантов и беженцев,La UE se ha comprometido a reubicar a 160 000 refugiados,欧州連合（EU）が割り当て・移送に合意した難民数は１６万人,16万难民在等待欧盟安置
+descr2,Each migrant is represented by a square,Chaque migrant est représenté par un carré,Jeder Migrant wird mit einem Quadrat dargestellt,Ogni persona è rappresentata da un quadratino,Cada imigrante é representado por um quadrado,كل شخص ممثل بُمربّع,Каждый квадратик означает одного беженца,Cada cuadrado corresponde a un refugiado,一つの正方形は難民１人に相当する,每位移民占据一格
+descr3,"Situation on March 7, 2016",Situation au 7 mars 2016,Situation am 7. März 2016,Situazione al 7 marzo 2016,Situação em 7 de março de 2016,الوضعية بتاريخ 7 مارس 2016,Ситуация по состоянию на 7 марта 2016 года,Situación el 7 de marzo de 2016,２０１６年３月7日現在,2016年3月7日的状况
+source,Source: European Commission | swissinfo.ch,source: Commission Européenne | swissinfo.ch,Quelle: Europäische Kommission | swissinfo.ch,Fonte: Commissione europea | swissinfo.ch,Fonte: Comissão Europeia | swissinfo.ch,المصدر: المفوضية الأوروبية swissinfo.ch,Источник: European Commission / swissinfo.ch,Fuente: Comisión Europea | swissinfo.ch,出典：欧州委員会、swissinfo.ch,来源：欧盟委员会及瑞士资讯swissinfo.ch
+reloc.type,migrants relocated,relocalisés,Umverteilte Migranten ,Migranti già ricollocati,relocados,مهاجرون أعيد توطينهم  ,Переселенные мигранты,refugiados relocalizados,移送完了,已安置的难民
+pret.type,places made available,places prêtes,Verfügbare Plätze,Posti di accoglienza messi a disposizione,lugares disponíveis,مواقع تم توفيرها ,Возможные регионы размещения беженцев,plazas de acogida disponibles,受け入れ可能数,可安置名额
+eng.type,commitments by states,engagements pris par les Etats,Verpflichtungen der Staaten,Impegni assunti finora dagli Stati,compromissos porE stados,تعهّدات الدول حتى الآن,Доля государств ЕС,compromisos asumidos hasta ahora por los Estados,加盟国が受け入れ約束済み,成员国所做的安置努力
+rep.type,remaining to share between states,à répartir parmi les Etats,Noch zu verteilende Migranten,Migranti ancora da ripartire tra i diversi Stati,para ser distribuído entre os Estados,مهاجرون لا زالوا في انتظار إعادة التوزيع بين مختلف الدول ,осталось распределить между странами Евросоюза,personas que quedan por repartir entre los diferentes Estados,加盟国間に割り当てられるべき難民,各国还需安置难民人数
+font,Open Sans,Open Sans,Open Sans,Open Sans,Open Sans,Open Sans,Open Sans,Open Sans,Osaka,Yuanti TC
+font1,Open Sans Light,Open Sans Light,Open Sans Light,Open Sans Light,Open Sans Light,Open Sans Light,Open Sans Light,Open Sans Light,Osaka,Yuanti TC Light

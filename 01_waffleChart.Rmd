@@ -22,7 +22,6 @@ library(scales)
 
 [google sheet translations](https://docs.google.com/spreadsheets/d/1sUj5E_rtbsT-ZqFTCgQ4HO2q8zGngjqwu1OnOBWtt1I/edit#gid=0)
 
-
 ```{r}
 # load the translations
 txt <- read.csv("input/RelocationEU_migrants - Sheet1.csv", stringsAsFactors = F, row.names = 1)
@@ -33,23 +32,29 @@ if(length(cidx > 0)) {
 }
 
 # Define the data!
-data <- c(328 + 301)
-data <- c(data, 6202 - data)
-data <- c(data, 98256 - sum(data))
-data <- c(data,  7744 + 54000)
+n.ch <- 1500 #  1500 places that Switzerland engaged itself but somehow not in the EU numbers 
+
+data <- c(338 + 534) # relocated from Italy and Greece
+data <- c(data, 6930 - data) # 17 states 6412 places out of 160k
+data <- c(data, (98256 + n.ch )- sum(data)) #initial 98256 + 1500 places that Switzerland engaged itself 
+data <- c(data,  (7744 + 54000) - n.ch)
 stopifnot(sum(data) == 160000)
 ```
 
 ## Helper waffle chart
 ```{r, echo =F}
 waffleduc <- function(parts, rows = 10, xlab=NULL, title=NULL, colors=NA,
-                   size = 2, flip = FALSE, reverse=FALSE, equal=TRUE, pad=0,
-                   use_glyph = FALSE, glyph_size = 12,legend_pos = "right", 
-                   legend.key = element_rect(size = 5, color = NA),
-                   legend.key.size = unit(2.5, "cm"),
-                   legend.key.height = unit(3, "cm"),
-                   legend.text = element_text(size = 50), 
-                   plot.title = element_text(size=24,  family = "Open Sans Semibold", hjust = 0, vjust = -0.1)) {
+  size = 2, flip = FALSE, reverse=FALSE, equal=TRUE, pad=0,
+  use_glyph = FALSE, glyph_size = 12,legend_pos = "right", 
+  legend.key = element_rect(size = 5, color = NA),
+  legend.key.size = unit(2.5, "cm"),
+  legend.key.height = unit(2, "cm"),
+  legend.text = element_text(size = 50), 
+  plot.title = element_text(size=24,  
+    family = "Open Sans Semibold", 
+    hjust = 0, 
+    vjust = -0.1
+  )) {
 
   # fill in any missing names
   part_names <- names(parts)
@@ -93,7 +98,7 @@ waffleduc <- function(parts, rows = 10, xlab=NULL, title=NULL, colors=NA,
     gg <- gg + scale_fill_manual(name="",
                                  values=colors,
                                  labels=part_names)
-    gg <- gg + guides(fill=guide_legend(nrow = 2, byrow = TRUE, override.aes=list(colour=NULL)))
+    gg <- gg + guides(fill=guide_legend(nrow = 4, byrow = TRUE, override.aes=list(colour=NULL)))
 
   } else {
 
@@ -162,11 +167,11 @@ waffleduc <- function(parts, rows = 10, xlab=NULL, title=NULL, colors=NA,
 for (lang in colnames(txt)) {
   
   dd <- data
-  title <- paste(strwrap(txt['main.title', lang], width = 48, prefix = "\n ", initial = ""), collapse ="")
+  title <- paste(strwrap(txt['main.title', lang], width = 40, prefix = "\n ", initial = ""), collapse ="")
   
-  header.fsize <- 96
+  header.fsize <- 106
   title.fsize <- 60
-  legend.fsize <- 40
+  legend.fsize <- 56
   
   
   gridFormat <- function(
@@ -174,20 +179,30 @@ for (lang in colnames(txt)) {
     grid.arrange(gg,
       top = textGrob(top, x = 0, y = -0.1, vjust = 0, hjust = 0,
       gp = gpar(fontsize = header.fsize, fontfamily = txt['font1', lang], col = "black", lineheight = 0.8)),
-      bottom = textGrob(bottom, x = 0.98, y = 1, vjust = 1, hjust = 1,
+        bottom = textGrob(bottom, x = 0.98, y = 1, vjust = 1, hjust = 1,
       gp = gpar(fontsize = 24, fontfamily = txt['font', lang], col = "#737373"))
     )
   }
   
   names(dd) <- txt[c('reloc.type', 'pret.type', 'eng.type', 'rep.type'), lang]
-  names(dd) <-  paste("", names(dd), "  ")
+  names(dd) <-  paste(" ", names(dd), "  ")
   
+  subtitle <- paste0(txt['descr', lang], ". ", txt['descr2', lang], ". ", txt['descr3', lang])
+  subtitle <- paste0("\n", paste(strwrap(subtitle, width = 56, prefix = "\n", initial = ""), collapse =""), "\n")
+   
+    if(lang == "JA") {
+    header.fsize <- 72
+    title <- txt['main.title', lang]
+    subtitle <- paste0("\n", txt['descr', lang], "\n", txt['descr2', lang], "\n", txt['descr3', lang], "\n")
+  }
+
   wchart <- waffleduc(dd, rows = 200, size = 1.2, color = c('#333366', '#ab3d3f', '#aa8959', "darkgrey"), 
     legend_pos = "top", flip = T, reverse = T, 
     legend.key.size = unit(1.5, "cm"),
-    title = paste0("\n", txt['descr', lang], "\n", txt['descr2', lang], "\n", txt['descr3', lang], "\n"),
-    plot.title = element_text(size = title.fsize,  family = txt['font', lang], hjust = 0, vjust = -0.1),
-    legend.text = element_text(size = legend.fsize, family = txt['font', lang]))
+    title = subtitle, 
+    plot.title = element_text(size = title.fsize,  family = txt['font', lang], 
+      hjust = 0, vjust = -0.5, color = "#666666"),
+      legend.text = element_text(size = legend.fsize, family = txt['font', lang]))
 
 png(paste0("output/waffle_repartition_", lang, ".png"), width = 640 * 3, height = 640 * 12)
 gridFormat(wchart)

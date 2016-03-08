@@ -71,19 +71,22 @@ img {
 <div id="prepare-data" class="section level2">
 <h2>Prepare data</h2>
 <p><a href="http://ec.europa.eu/dgs/home-affairs/what-we-do/policies/european-agenda-migration/press-material/docs/state_of_play_-_relocation_en.pdf">Data from EU council</a></p>
+<p><a href="https://docs.google.com/spreadsheets/d/1sUj5E_rtbsT-ZqFTCgQ4HO2q8zGngjqwu1OnOBWtt1I/edit#gid=0">google sheet translations</a></p>
 <pre class="r"><code># load the translations
 txt &lt;- read.csv(&quot;input/RelocationEU_migrants - Sheet1.csv&quot;, stringsAsFactors = F, row.names = 1)
 cidx &lt;- unique(which(txt ==&quot;&quot; | is.na(txt), T)[,2])
 if(length(cidx &gt; 0)) {
   warning(paste(colnames(txt)[cidx], collapse = &quot;\t&quot;), &quot; languages will be discarded!&quot;, &quot;\n&quot;)
   txt &lt;- txt[,-cidx, drop = F]
-}</code></pre>
-<pre><code>## Warning: EN  DE  PT  AR  RU  ES  JA  ZH languages will be discarded!</code></pre>
-<pre class="r"><code># Define the data!
-data &lt;- c(328 + 301)
-data &lt;- c(data, 6202 - data)
-data &lt;- c(data, 98256 - sum(data))
-data &lt;- c(data,  7744 + 54000)
+}
+
+# Define the data!
+n.ch &lt;- 1500 #  1500 places that Switzerland engaged itself but somehow not in the EU numbers 
+
+data &lt;- c(338 + 534) # relocated from Italy and Greece
+data &lt;- c(data, 6930 - data) # 17 states 6412 places out of 160k
+data &lt;- c(data, (98256 + n.ch )- sum(data)) #initial 98256 + 1500 places that Switzerland engaged itself 
+data &lt;- c(data,  (7744 + 54000) - n.ch)
 stopifnot(sum(data) == 160000)</code></pre>
 </div>
 <div id="helper-waffle-chart" class="section level2">
@@ -94,11 +97,11 @@ stopifnot(sum(data) == 160000)</code></pre>
 <pre class="r"><code>for (lang in colnames(txt)) {
   
   dd &lt;- data
-  title &lt;- paste(strwrap(txt['main.title', lang], width = 48, prefix = &quot;\n &quot;, initial = &quot;&quot;), collapse =&quot;&quot;)
+  title &lt;- paste(strwrap(txt['main.title', lang], width = 40, prefix = &quot;\n &quot;, initial = &quot;&quot;), collapse =&quot;&quot;)
   
-  header.fsize &lt;- 96
+  header.fsize &lt;- 106
   title.fsize &lt;- 60
-  legend.fsize &lt;- 40
+  legend.fsize &lt;- 56
   
   
   gridFormat &lt;- function(
@@ -106,20 +109,30 @@ stopifnot(sum(data) == 160000)</code></pre>
     grid.arrange(gg,
       top = textGrob(top, x = 0, y = -0.1, vjust = 0, hjust = 0,
       gp = gpar(fontsize = header.fsize, fontfamily = txt['font1', lang], col = &quot;black&quot;, lineheight = 0.8)),
-      bottom = textGrob(bottom, x = 0.98, y = 1, vjust = 1, hjust = 1,
+        bottom = textGrob(bottom, x = 0.98, y = 1, vjust = 1, hjust = 1,
       gp = gpar(fontsize = 24, fontfamily = txt['font', lang], col = &quot;#737373&quot;))
     )
   }
   
   names(dd) &lt;- txt[c('reloc.type', 'pret.type', 'eng.type', 'rep.type'), lang]
-  names(dd) &lt;-  paste(&quot;&quot;, names(dd), &quot;  &quot;)
+  names(dd) &lt;-  paste(&quot; &quot;, names(dd), &quot;  &quot;)
   
+  subtitle &lt;- paste0(txt['descr', lang], &quot;. &quot;, txt['descr2', lang], &quot;. &quot;, txt['descr3', lang])
+  subtitle &lt;- paste0(&quot;\n&quot;, paste(strwrap(subtitle, width = 56, prefix = &quot;\n&quot;, initial = &quot;&quot;), collapse =&quot;&quot;), &quot;\n&quot;)
+   
+    if(lang == &quot;JA&quot;) {
+    header.fsize &lt;- 72
+    title &lt;- txt['main.title', lang]
+    subtitle &lt;- paste0(&quot;\n&quot;, txt['descr', lang], &quot;\n&quot;, txt['descr2', lang], &quot;\n&quot;, txt['descr3', lang], &quot;\n&quot;)
+  }
+
   wchart &lt;- waffleduc(dd, rows = 200, size = 1.2, color = c('#333366', '#ab3d3f', '#aa8959', &quot;darkgrey&quot;), 
     legend_pos = &quot;top&quot;, flip = T, reverse = T, 
     legend.key.size = unit(1.5, &quot;cm&quot;),
-    title = paste0(&quot;\n&quot;, txt['descr', lang], &quot;\n&quot;, txt['descr2', lang], &quot;\n&quot;, txt['descr3', lang], &quot;\n&quot;),
-    plot.title = element_text(size = title.fsize,  family = txt['font', lang], hjust = 0, vjust = -0.1),
-    legend.text = element_text(size = legend.fsize, family = txt['font', lang]))
+    title = subtitle, 
+    plot.title = element_text(size = title.fsize,  family = txt['font', lang], 
+      hjust = 0, vjust = -0.5, color = &quot;#666666&quot;),
+      legend.text = element_text(size = legend.fsize, family = txt['font', lang]))
 
 png(paste0(&quot;output/waffle_repartition_&quot;, lang, &quot;.png&quot;), width = 640 * 3, height = 640 * 12)
 gridFormat(wchart)
